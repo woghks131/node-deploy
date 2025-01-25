@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <div class="timeline">
+    <div class="followings half">
+      <h2>팔로잉 목록</h2>
+      {% if user.Followings %}
+        {% for following in user.Followings %}
+        <form id="hashtag-form">
+          <div style="text-align: center;">
+            <input type="hidden" value="{{following.id}}" class="followingId">
+            {{following.nick}}
+            <button class="unfollowbtn">끊기</button>
+          </div> 
+        </form>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="followers half">
+      <h2>팔로워 목록</h2>
+      {% if user.Followers %}
+        {% for follower in user.Followers %}
+          <div>{{follower.nick}}</div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.unfollowbtn').forEach(function(tag) {
+      tag.addEventListener('click', function() {
+        const followingId = document.querySelector('.followingId').value;
+        if (followingId) {
+          if (confirm('언팔로잉하시겠습니까?')) {
+            axios.post(`/user/${followingId}/unfollow`)
+              .then(() => {
+                location.reload();
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}
